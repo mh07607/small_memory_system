@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\title{Memory System Data Structures Overview}
+\author{Muhammad Arsalan Hussain}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+This document provides a high-level overview of the data structures used in the `memorysystem.c` program. The program simulates memory allocation and deallocation in a stack and heap environment.
+
+\section*{Data Structures}
+
+\subsection*{Allocation Structure}
+\texttt{allocation} structure represents an allocated memory block and is defined as follows:
+\begin{itemize}
+    \item \texttt{name}: An 8-character identifier for the allocation.
+    \item \texttt{frameaddress}: The starting address of the allocated frame.
+    \item \texttt{next}: Pointer to the next allocation in the linked list.
+\end{itemize}
+
+\subsection*{Frame Status Structure}
+\texttt{framestatus} structure maintains the status of each frame in the stack:
+\begin{itemize}
+    \item \texttt{number}: Frame number.
+    \item \texttt{name}: A function name representing the frame.
+    \item \texttt{functionaddress}: Address of the function in the code section.
+    \item \texttt{frameaddress}: Starting address of the frame in the stack.
+    \item \texttt{used}: A boolean value indicating whether the frame status entry is in use.
+\end{itemize}
+
+\subsection*{Free List Structure}
+\texttt{freelist} structure represents a free region in the memory and is implemented as a linked list:
+\begin{itemize}
+    \item \texttt{start}: Start address of the free region.
+    \item \texttt{size}: Size of the free region.
+    \item \texttt{next}: Pointer to the next free region.
+\end{itemize}
+
+\section*{Memory System Operations Overview}
+
+The program provides functions for creating frames, deleting functions, and allocating/deallocating various data types, including integers, doubles, characters, and buffers. The memory system is simulated with a stack and a heap.
+
+\subsection*{Memory Management Functions}
+\begin{itemize}
+    \item \texttt{create\_frame}: Creates a new frame in the stack.
+    \item \texttt{delete\_function}: Deletes the topmost frame from the stack.
+    \item \texttt{expand\_frame}: Expands the size of a frame in the stack.
+    \item \texttt{create\_integer}, \texttt{create\_double}, \texttt{create\_character}: Allocates space for integer, double, or character variables in the stack, and copies data to the allocated memory.
+    \item \texttt{create\_buffer}: Allocates a buffer in the heap, updates the linked list of allocations and the free list accordingly.
+    \item \texttt{delete\_buffer}: Deallocates a buffer in the heap, updates the linked list of allocations and the free list accordingly.
+    \item \texttt{show\_memory}: Displays the current state of the memory, including frame statuses, allocations, and the free list.
+\end{itemize}
+
+\subsection*{Memory Simulation}
+The program simulates stack memory starting at index 394 and heap memory starting at index 0. Frames are managed in the stack, and dynamic memory allocations are managed in the heap.
+
+\subsection*{Linked List Operations}
+The \texttt{freelist} and \texttt{allocation} structures are implemented as linked lists. When a new buffer is created $(create \textunderscore buffer)$, the program searches for a free node in the freelist with enough space to accommodate the requested buffer size.
+If a suitable free node is found, it is used for the allocation. The size and start address of the free node are updated accordingly to reflect the allocated space.
+If a free node has exactly the required size, it may be entirely consumed by the allocation, in which case it is removed from the linked list.
+If a free node has more space than needed, a new free node is created with the remaining space, and it is inserted back into the linked list.
+
+When a buffer is allocated $(create \textunderscore buffer)$, a new node is added to the allocation linked list. This node contains information about the allocated buffer, such as its name and starting address in the heap.
+When a buffer is deallocated $(delete\_buffer)$, the corresponding node is removed from the linked list.
+The deallocated memory block in the heap is then added back to the freelist as a new free node, keeping the list updated with available free space.
+
+\subsection*{Memory Traversal and Copying}
+Memory is traversed and copied in the texttt{create \textunderscore integer}, \texttt{create \textunderscore double}, and \texttt{create\_character} functions, where the data is copied to the allocated memory space.
+The memcpy function is utilized to copy data from one memory location to another.
+Memory traversal is dependent on the $current\_stack\_index$ which specifies the current top of stack memory.
+This variable is also used for checking whether size of the stack or a frame has exceeded the maximum size limits of each respectively.
+
+\section*{Conclusion}
+The `memorysystem.c` program implements a simple memory system with stack and heap management. The data structures used provide a foundation for simulating memory allocation and deallocation operations.
+
+\end{document}

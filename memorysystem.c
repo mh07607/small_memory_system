@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MEMORYSIZE 500
 #define MAXSTACKSIZE 300
@@ -235,8 +236,9 @@ int size)
 		if(freeNode->size >= size){
 			break;
 		}
+		freeNode = freeNode->next;
 	}
-	if(freeNode == NULL || *current_heap_size + 8 + size >= *current_stack_index){
+	if(freeNode == NULL || *current_heap_size + 8 + size >= *current_stack_index || *current_heap_size + 8 + size > MAXHEAPSIZE){
 		printf("Not enough space on heap for the allocation.\n");
 		return;
 	}
@@ -267,7 +269,7 @@ int size)
 	node->frameaddress = bufferIndex;
 	node->next = NULL;
 
-	int magicNumber = 69;
+	int magicNumber = rand();
 	memcpy(&memory[bufferIndex], &size, sizeof(int));
 	memcpy(&memory[bufferIndex+4], &magicNumber, sizeof(int));
 	//storing dummy data
@@ -388,7 +390,7 @@ int main (int argc, char * argv[]) {
 		framestatus_list[i]->number = i+1;
 	}
 
-	//initialize freelist
+	//initialize freelist and allocation lit
 	freelist * freelistRoot = malloc(sizeof(freelist));
 	freelistRoot->next = NULL;
 	freelistRoot->size = 300;
